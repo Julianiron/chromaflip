@@ -51,13 +51,13 @@
             display: flex;
 			flex-direction: column;
             align-items: center;
-            gap: 5px;
-            padding: 5px 10px;
-            border-radius: 20px;
+            gap: 0px;
+            padding: 5px 5px;
+            border-radius: 5px;
         }
 		
 		.player-label {
-			margin-bottom: 3px;
+			margin-bottom: 5px;
 			font-size: 14px;
 			font-weight: bold;
 		}
@@ -93,30 +93,30 @@
         }
         
         .disc {
-            width: 15px;
-            height: 15px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: inline-block;
         }
         
         .player-1 .disc {
             background-color: #229954;
-            border: 1px solid #fff;
+            border: 2px solid #fff;
         }
         
         .player-2 .disc {
             background-color: #f44336;
-			border: 1px solid #fff;
+			border: 2px solid #fff;
         }
         
         .player-3 .disc {
             background-color: #2196f3;
-			border: 1px solid #fff;
+			border: 2px solid #fff;
         }
         
         .player-4 .disc {
             background-color: #ccc33f;
-			border: 1px solid #fff;
+			border: 2px solid #fff;
         }
         
         .board {
@@ -171,22 +171,22 @@
         
         .piece.player-1 {
             background-color: #229954;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
         }
         
         .piece.player-2 {
             background-color: #f44336;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
         }
         
         .piece.player-3 {
             background-color: #2196f3;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
         }
         
         .piece.player-4 {
             background-color: #ccc33f;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
         }
         
         .controls {
@@ -269,6 +269,108 @@
                 font-size: 14px;
             }
         }
+		
+		.podium-container {
+			display: flex;
+			align-items: flex-end;
+			justify-content: center;
+			margin: 20px auto;
+			height: 180px;
+			max-width: 350px;
+		}
+
+		.podium-place {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin: 0 10px;
+			position: relative;
+		}
+
+		.podium-player {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-bottom: 5px;
+		}
+
+		.podium-disc {
+			width: 25px;
+			height: 25px;
+			border-radius: 50%;
+			margin-bottom: 5px;
+			border: 1px solid white;
+		}
+
+		.podium-name {
+			font-weight: bold;
+			font-size: 14px;
+			text-align: center;
+		}
+
+		.podium-score {
+			font-size: 12px;
+		}
+
+		.podium-block {
+			width: 60px;
+			border-radius: 5px 5px 0 0;
+		}
+
+		.podium-1 .podium-block {
+			height: 100px;
+			background-color: #FFD700;
+		}
+
+		.podium-2 .podium-block {
+			height: 70px;
+			background-color: #C0C0C0;
+		}
+
+		.podium-3 .podium-block {
+			height: 40px;
+			background-color: #CD7F32;
+		}
+
+		.medal {
+			position: absolute;
+			top: -15px;
+			font-size: 24px;
+		}
+
+		.winner-announcement {
+			text-align: center;
+			margin: 15px 0;
+			font-size: 22px;
+			font-weight: bold;
+			color: #388E3C;
+		}
+
+		/* Update game-over style for the new layout */
+		.game-over {
+			text-align: center;
+			margin-top: 20px;
+			padding: 30px;
+			background-color: white;
+			border-radius: 10px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			display: none;
+			max-width: 500px; /* Increased from 400px */
+			margin-left: auto;
+			margin-right: auto;
+}
+		
+		/* Add more space between elements */
+		#final-results > div {
+			margin-bottom: 30px; /* Increased from 20px */
+		}
+
+		/* Ensure buttons don't overlap with other elements */
+		#new-game-btn {
+			margin-top: 35px; /* Increased from 25px */
+			display: inline-block;
+		}
+
     </style>
 </head>
 <body>
@@ -333,7 +435,6 @@
         </div>
         
         <div class="game-over" id="game-over">
-            <h2>Game Over!</h2>
             <div id="final-results"></div>
             <button id="new-game-btn">New Game</button>
         </div>
@@ -721,52 +822,94 @@
                 }
             }
             
-            // Show game over screen
-            function showGameOver() {
-                const counts = countPieces();
-                
-                // Only consider active players in the game
-                const activeCounts = counts.slice(1, numPlayers + 1);
-                const maxCount = Math.max(...activeCounts);
-                
-                let winners = [];
-                for (let i = 1; i <= numPlayers; i++) {
-                    if (counts[i] === maxCount) {
-                        winners.push(i);
-                    }
-                }
-                
-                let resultHTML = '<div style="margin-bottom: 15px;">';
-                
-                // Create score display
-                for (let i = 1; i <= numPlayers; i++) {
-                    let style = `display: inline-block; margin: 5px 10px; padding: 5px 10px; border-radius: 5px; color: white;`;
-                    let color;
-                    
-                    switch (i) {
-                        case 1: color = '#28B463'; break;
-                        case 2: color = '#f44336'; break;
-                        case 3: color = '#2196f3'; break;
-                        case 4: color = '#ccc33f'; break;
-                    }
-                    
-                    resultHTML += `<div style="${style} background-color: ${color}">
-                        ${playerNames[i]}: ${counts[i]} pieces
-                    </div>`;
-                }
-                
-                resultHTML += '</div>';
-                
-                // Show winner
-                if (winners.length === 1) {
-                    resultHTML += `<h3>${playerNames[winners[0]]} wins!</h3>`;
-                } else {
-                    resultHTML += `<h3>It's a tie between Players ${winnerNames}!</h3>`;
-                }
-                
-                finalResultsElement.innerHTML = resultHTML;
-                gameOverElement.style.display = 'block';
-            }
+            // Show game over screen with podium
+				function showGameOver() {
+				const counts = countPieces();
+    
+			// Create player results with player number and score
+				let playerResults = [];
+				for (let i = 1; i <= numPlayers; i++) {
+					playerResults.push({
+						player: i,
+						score: counts[i],
+						name: playerNames[i]
+					});
+				}
+    
+				// Sort by score (highest first)
+				playerResults.sort((a, b) => b.score - a.score);
+				
+				// Find all winners (players with highest score)
+				const maxScore = playerResults[0].score;
+				const winners = playerResults.filter(p => p.score === maxScore);
+				
+				// Create podium HTML
+				let podiumHTML = '<div class="podium-container">';
+				
+				// Add podium places (we show 3 places or fewer if there are fewer players)
+				const podiumPlaces = Math.min(3, numPlayers);
+				
+				for (let i = 0; i < podiumPlaces; i++) {
+					const player = playerResults[i];
+					const place = i + 1;
+					let medalEmoji = '';
+					
+					// Add medal emoji
+					if (place === 1) medalEmoji = '🥇';
+					else if (place === 2) medalEmoji = '🥈';
+					else if (place === 3) medalEmoji = '🥉';
+        
+				podiumHTML += `
+					<div class="podium-place podium-${place}">
+						<div class="podium-player">
+							<div class="medal">${medalEmoji}</div>
+							<div class="podium-disc" style="background-color: ${getPlayerColor(player.player)}"></div>
+							<div class="podium-name">${player.name}</div>
+							<div class="podium-score">${player.score}</div>
+						</div>
+						<div class="podium-block"></div>
+					</div>
+				`;
+			}
+     
+				// Create winner announcement
+				let winnerHTML = '';
+				if (winners.length === 1) {
+					winnerHTML = `<div class="winner-announcement">Winner is ${winners[0].name}!</div>`;
+				} else {
+					const winnerNames = winners.map(w => w.name).join(' & ');
+					winnerHTML = `<div class="winner-announcement">It's a tie between ${winnerNames}!</div>`;
+				}
+    
+				// Display all player scores in a more compact format
+				let scoresHTML = '<div style="margin: 30px 0 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">';
+				playerResults.forEach(player => {
+					scoresHTML += `
+						<div style="display: inline-block; padding: 5px 12px; 
+							  border-radius: 5px; color: white; background-color: ${getPlayerColor(player.player)}; 
+							  font-size: 15px; font-weight: bold;">
+							${player.name}: ${player.score}
+						</div>
+					`;
+				});
+				scoresHTML += '</div>';
+    
+				// Set the content and show the game over element
+				finalResultsElement.innerHTML = winnerHTML + podiumHTML + scoresHTML + 
+				'<div style="height: 20px;"></div>'; // Add extra space before button
+				gameOverElement.style.display = 'block';
+	}
+
+			// Helper function to get player color
+			function getPlayerColor(player) {
+				switch (player) {
+					case 1: return '#229954';
+					case 2: return '#f44336';
+					case 3: return '#2196f3';
+					case 4: return '#ccc33f';
+					default: return '#777777';
+    }
+}
             
             // Simple AI for making moves (chooses move that flips the most pieces)
             function makeAIMove() {
@@ -890,6 +1033,8 @@
             // Start by showing game mode selection
             initGameMode();
         });
+			
+		
     </script>
 </body>
 </html>
